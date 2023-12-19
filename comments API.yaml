@@ -1,0 +1,364 @@
+openapi: 3.0.3
+info:
+  title: Steam API
+  description: API game review
+  version: "1.0"
+tags:
+  - name: Review
+    description: "Everything about game reviews (almost)"
+  - name: Profile
+    description: "Everything about profile (almost)"
+servers:
+  - url: https:/
+paths:
+  /store.steampowered.com/friends/recommendgame:
+    post:
+      tags:
+        - Review
+      summary: Create game review
+      description: Creates game review
+      operationId: createReview
+      parameters:
+        - name: Cookie
+          in: header
+          required: false
+          description: Auth Cookie
+          schema:
+            type: string
+            example: empty
+      requestBody:
+        description: Creates game review
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Review'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Review'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Review'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+  
+  /steamcommunity.com/userreviews/update/{reviewID}:
+    post:
+      tags:
+        - Review
+      description: update review
+      summary: Update review
+      operationId: updReview
+      parameters:
+        - name: reviewID
+          in: path
+          description: ID of review to update
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Cookie
+          in: header
+          required: false
+          description: Auth Cookie
+          schema:
+            type: string
+            example: empty
+      requestBody:
+        description: change review info
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateReview'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UpdateReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateReview'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+
+  /steamcommunity.com/id/{username}/recommended:
+    post:
+      tags:
+        - Review
+      description: delete review
+      summary: Delete review
+      operationId: delReview
+      parameters:
+        - name: username
+          in: path
+          description: user name
+          required: true
+          schema:
+            type: string
+        - name: Cookie
+          in: header
+          required: false
+          description: Auth Cookie
+          schema:
+            type: string
+            example: empty
+      requestBody:
+        description: delete review
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Delete'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Delete'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Delete'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Delete'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Delete'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+
+  /store.steampowered.com//userreviews/ajaxgetvotes/:
+    post:
+      description: get game reviews
+      summary: Get game reviews
+      tags:
+        - Review
+      parameters:
+        - name: Cookie
+          in: header
+          required: false
+          description: Auth Cookie
+          schema:
+            type: string
+            example: empty
+      requestBody:
+        description: revews IDs
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetReviews'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/GetReviews'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GetReviews'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetResponse200'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/GetResponse200'
+
+      
+
+
+components:
+  schemas:
+    Review:
+      required:
+        - appid
+        - steamworksappid
+        - comment
+        - rated_up
+        - is_public
+        - language
+        - received_compensation
+        - disable_comments
+        - sessionid
+      type: object
+      properties:
+        appid:
+          type: integer
+          example: 632360
+          description: App ID
+        steamworksappid:
+          type: integer
+          example: 632360
+          description: App ID
+        comment:
+          type: string
+          example: какой же обзористый обзор я написал
+          description: Review by itself
+        rated_up:
+          type: boolean
+          example: true
+          description: Data if game is rated like/dislike
+        is_public:
+          type: boolean
+          example: true
+          description: Only user's friends can read this review if false 
+        language:
+          type: string
+          example: russian
+          description: Review language
+        received_compensation:
+          type: integer
+          example: true
+          description: Check if app was got for free
+        disable_comments:
+          type: integer
+          example: 0
+          description: Enables commenting opportunity
+        sessionid:
+          type: string
+          example: s7526v4x2d5w6fs5b87616aa
+          description: Session ID
+    
+    Response200:
+      type: object
+      properties:
+        strError:
+          type: string
+          example: При публикации вашего обзора произошла ошибка
+        success:
+          type: boolean
+          example: true
+    
+    GetResponse200:
+      type: object
+      properties:
+        success:
+          type: integer
+          example: 1
+        votes:
+          type: array
+          description: Array of reviews
+          items:
+            type: object
+            properties:
+              recommendationid:
+                type: string
+                example: "150882743"
+                description: Review ID
+              voted_up:
+                type: integer
+                example: 0
+                description: Likes amount
+              voted_down:
+                type: integer
+                example: 1
+                description: Dislikes amount
+              reported:
+                type: integer
+                example: 0
+                description: Reports amount
+              voted_funny:
+                type: integer
+                example: 0
+                description: Voted funny amount
+    
+    GetReviews:
+      type: object
+      properties:
+        recommendationids[]:
+          type: integer
+          example: 150882743
+          description: ID to get review
+    
+    UpdateReview:
+      required:
+        - review_text
+        - voted_up
+        - received_compensation
+        - sessionid
+      type: object
+      properties:
+        success:
+          type: integer
+          example: 1
+          description: Success
+        review_text:
+          type: string
+          example: а я передумал
+          description: Changed (or not) review text
+        voted_up:
+          type: boolean
+          example: true
+          description: Like / dislike
+        received_compensation:
+          type: boolean
+          example: false
+          description: Check if app was got for free
+        language:
+          type: string
+          example: schinese
+          description: Review language
+        comments_disabled:
+          type: boolean
+          example: false
+          description: Enable commenting
+        is_public:
+          type: boolean
+          example: true
+          description: Only user's friends can read this review if false 
+        sessionid:
+          type: string
+          example: s7526v4x2d5w6fs5b87616aa
+          description: Session ID
+    
+    Delete:
+      required:
+        - action
+        - sessionid
+        - appid
+      type: object
+      properties:
+        action:
+          type: string # string или какой-то enum?
+          example: delete
+          description: Action to do - delete
+        sessionid:
+          type: string
+          example: s7526v4x2d5w6fs5b87616aa
+          description: Session ID
+        appid:
+          type: integer
+          example: 632360
+          description: App ID
+          

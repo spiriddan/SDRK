@@ -1,0 +1,143 @@
+openapi: 3.0.3
+info:
+  title: Steam API
+  description: So now user can add reaction to choosen comment on his page
+  version: "1.0"
+tags:
+  - name: Profile
+    description: "Everything about profile (almost)"
+servers:
+  - url: https://steamcommunity.com/id
+paths:
+  /{username}:
+    post:
+      tags: 
+        - Profile
+      parameters:
+        - name: username
+          in: path
+          description: user name
+          required: true
+          schema:
+            type: string
+        - name: Cookie
+          in: header
+          required: false
+          description: Auth Cookie
+          schema:
+            type: string
+            example: empty
+      description: So now user can add reaction to choosen comment on his page
+      summary: Add reactions to profile comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddReact'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/AddReact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AddReact'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+    put:
+      tags: 
+        - Profile
+      parameters:
+        - name: username
+          in: path
+          description: user name
+          required: true
+          schema:
+            type: string
+        - name: Cookie
+          in: header
+          required: false
+          description: Auth Cookie
+          schema:
+            type: string
+            example: empty
+      description: Delete reaction from comment
+      summary: Delete reaction from profile comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DelReact'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DelReact'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DelReact'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response200'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Response200'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    AddReact:
+      type: object
+      properties:
+        commentid:
+          type: integer
+          example: 3385042609888585154
+        reactionID:
+          type: integer
+          example: 2134
+    
+    DelReact:
+      type: object
+      properties:
+        commentid:
+          type: integer
+          example: 3385042609888585154
+        reactionID:
+          type: integer
+          example: 2134
+        delete:
+          type: boolean
+          example: true
+    
+    Response200:
+      type: object
+      properties:
+        strError:
+          type: string
+          example: При публикации вашего обзора произошла ошибка
+        success:
+          type: boolean
+          example: true
